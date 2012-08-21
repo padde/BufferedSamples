@@ -13,6 +13,12 @@
 		C215481115E3FEF700482734 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C215480F15E3FEF700482734 /* InfoPlist.strings */; };
 		C215481315E3FEF700482734 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C215481215E3FEF700482734 /* main.m */; };
 		C215481715E3FEF700482734 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C215481615E3FEF700482734 /* AppDelegate.m */; };
+		C215481F15E3FFA900482734 /* DummyRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = C215481E15E3FFA900482734 /* DummyRecorder.m */; };
+		C215482715E4029500482734 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C215482615E4029500482734 /* AudioToolbox.framework */; };
+		C215482915E4029800482734 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C215482815E4029800482734 /* AVFoundation.framework */; };
+		C215482B15E402EC00482734 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C215482A15E402EC00482734 /* CoreAudio.framework */; };
+		C215482C15E4030F00482734 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = C215482015E4003C00482734 /* TPCircularBuffer.c */; };
+		C215482D15E4031200482734 /* TPCircularBuffer+AudioBufferList.c in Sources */ = {isa = PBXBuildFile; fileRef = C215482215E4003C00482734 /* TPCircularBuffer+AudioBufferList.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +32,15 @@
 		C215481415E3FEF700482734 /* BufferedSamples-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BufferedSamples-Prefix.pch"; sourceTree = "<group>"; };
 		C215481515E3FEF700482734 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		C215481615E3FEF700482734 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C215481D15E3FFA900482734 /* DummyRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyRecorder.h; sourceTree = "<group>"; };
+		C215481E15E3FFA900482734 /* DummyRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyRecorder.m; sourceTree = "<group>"; };
+		C215482015E4003C00482734 /* TPCircularBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TPCircularBuffer.c; sourceTree = "<group>"; };
+		C215482115E4003C00482734 /* TPCircularBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
+		C215482215E4003C00482734 /* TPCircularBuffer+AudioBufferList.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "TPCircularBuffer+AudioBufferList.c"; sourceTree = "<group>"; };
+		C215482315E4003C00482734 /* TPCircularBuffer+AudioBufferList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TPCircularBuffer+AudioBufferList.h"; sourceTree = "<group>"; };
+		C215482615E4029500482734 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		C215482815E4029800482734 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		C215482A15E402EC00482734 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +48,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C215482B15E402EC00482734 /* CoreAudio.framework in Frameworks */,
+				C215482915E4029800482734 /* AVFoundation.framework in Frameworks */,
+				C215482715E4029500482734 /* AudioToolbox.framework in Frameworks */,
 				C215480715E3FEF700482734 /* UIKit.framework in Frameworks */,
 				C215480915E3FEF700482734 /* Foundation.framework in Frameworks */,
 				C215480B15E3FEF700482734 /* CoreGraphics.framework in Frameworks */,
@@ -62,6 +80,9 @@
 		C215480515E3FEF600482734 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C215482A15E402EC00482734 /* CoreAudio.framework */,
+				C215482815E4029800482734 /* AVFoundation.framework */,
+				C215482615E4029500482734 /* AudioToolbox.framework */,
 				C215480615E3FEF600482734 /* UIKit.framework */,
 				C215480815E3FEF700482734 /* Foundation.framework */,
 				C215480A15E3FEF700482734 /* CoreGraphics.framework */,
@@ -74,6 +95,12 @@
 			children = (
 				C215481515E3FEF700482734 /* AppDelegate.h */,
 				C215481615E3FEF700482734 /* AppDelegate.m */,
+				C215481D15E3FFA900482734 /* DummyRecorder.h */,
+				C215481E15E3FFA900482734 /* DummyRecorder.m */,
+				C215482015E4003C00482734 /* TPCircularBuffer.c */,
+				C215482115E4003C00482734 /* TPCircularBuffer.h */,
+				C215482215E4003C00482734 /* TPCircularBuffer+AudioBufferList.c */,
+				C215482315E4003C00482734 /* TPCircularBuffer+AudioBufferList.h */,
 				C215480D15E3FEF700482734 /* Supporting Files */,
 			);
 			path = BufferedSamples;
@@ -152,8 +179,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C215482D15E4031200482734 /* TPCircularBuffer+AudioBufferList.c in Sources */,
+				C215482C15E4030F00482734 /* TPCircularBuffer.c in Sources */,
 				C215481315E3FEF700482734 /* main.m in Sources */,
 				C215481715E3FEF700482734 /* AppDelegate.m in Sources */,
+				C215481F15E3FFA900482734 /* DummyRecorder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

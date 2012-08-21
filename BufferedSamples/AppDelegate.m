@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
+#import "DummyRecorder.h"
 
 @implementation AppDelegate
 
@@ -20,6 +22,20 @@
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
+    
+    NSError *setCategoryErr = nil;
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&setCategoryErr];
+    
+    UInt32 doChangeDefaultRoute = 1;
+    AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryDefaultToSpeaker, sizeof(doChangeDefaultRoute), &doChangeDefaultRoute);
+    
+    NSError *activationErr = nil;
+    [[AVAudioSession sharedInstance] setActive:YES error:&activationErr];
+    
+    // use the dummy recorder
+    DummyRecorder *dummyRecorder = [[DummyRecorder alloc] init];
+    [dummyRecorder start];
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
