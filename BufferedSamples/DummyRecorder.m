@@ -17,6 +17,15 @@
 #define kSamplingRate 44100.0
 #define kBufferLength 4096*kTwoBytesPerSInt16 // holds 4096 samples (or more)
 
+// taken from http://pastebin.com/zMc3xBMS by Michael Tyson
+#define checkResult(result,operation) (_checkResult((result),(operation),strrchr(__FILE__, '/'),__LINE__))
+static inline BOOL _checkResult(OSStatus result, const char *operation, const char* file, int line) {
+    if ( result != noErr ) {
+        NSLog(@"%s:%d: %s result %d %08X %4.4s\n", file, line, operation, (int)result, (int)result, (char*)&result);
+        return NO;
+    }
+    return YES;
+}
 
 static OSStatus inputCallback(void *inRefCon,
                               AudioUnitRenderActionFlags *ioActionFlags,
@@ -33,13 +42,14 @@ static OSStatus inputCallback(void *inRefCon,
     bufferList.mBuffers[0].mNumberChannels = 1;
     bufferList.mBuffers[0].mDataByteSize = inNumberFrames * kTwoBytesPerSInt16;
     bufferList.mBuffers[0].mData = NULL;
-    AudioUnitRender(dummyRecorder->audioUnit, ioActionFlags, inTimeStamp, kInputBus, inNumberFrames, &bufferList);
+    
+    OSStatus err = AudioUnitRender(dummyRecorder->audioUnit, ioActionFlags, inTimeStamp, kInputBus, inNumberFrames, &bufferList);
+    
     
     // move samples to ring buffer
-    if (bufferList.mBuffers[0].mData != NULL)
+    if (checkResult(err, "AudioUnitRender"))
         TPCircularBufferProduceBytes(&dummyRecorder->buffer, bufferList.mBuffers[0].mData, bufferList.mBuffers[0].mDataByteSize);
-    else
-        NSLog(@"null pointer");
+    
     
     return noErr;
 }
@@ -53,6 +63,7 @@ static OSStatus inputCallback(void *inRefCon,
     self = [super init];
     if (self) {
         TPCircularBufferInit(&buffer, kBufferLength);
+        
         [self createAudioUnit];
     }
     
@@ -61,7 +72,9 @@ static OSStatus inputCallback(void *inRefCon,
 
 -(void)dealloc
 {
-    
+    OSStatus err;
+    err = AudioComponentInstanceDispose(audioUnit);
+    checkResult(err, "AudioComponentInstanceDispose");
     
     TPCircularBufferCleanup(&buffer);
     
@@ -70,8 +83,11 @@ static OSStatus inputCallback(void *inRefCon,
 
 -(void)start
 {
-    AudioUnitInitialize(audioUnit);
-    AudioOutputUnitStart(audioUnit);
+    OSStatus err;
+    err = AudioUnitInitialize(audioUnit);
+    checkResult(err, "AudioUnitInitialize");
+    err = AudioOutputUnitStart(audioUnit);
+    checkResult(err, "AudioOutputUnitStart");
     
     recording = YES;
     [self performSelectorInBackground:@selector(consumeSamples) withObject:nil];
@@ -81,9 +97,11 @@ static OSStatus inputCallback(void *inRefCon,
 {
     recording = NO;
     
-    AudioOutputUnitStop(audioUnit);
-    AudioUnitUninitialize(audioUnit);
-    AudioComponentInstanceDispose(audioUnit);
+    OSStatus err;
+    err = AudioOutputUnitStop(audioUnit);
+    checkResult(err, "AudioOutputUnitStop");
+    err = AudioUnitUninitialize(audioUnit);
+    checkResult(err, "AudioUnitUninitialize");
     audioUnit = nil;
 }
 
@@ -114,6 +132,8 @@ static OSStatus inputCallback(void *inRefCon,
 
 -(void)createAudioUnit
 {
+    OSStatus err;
+    
     // describe audio unit
     AudioComponentDescription desc;
     desc.componentType = kAudioUnitType_Output;
@@ -124,16 +144,18 @@ static OSStatus inputCallback(void *inRefCon,
     
     // get audio component and unit
     AudioComponent ac = AudioComponentFindNext(NULL, &desc);
-    AudioComponentInstanceNew(ac, &audioUnit);
+    err = AudioComponentInstanceNew(ac, &audioUnit);
+    checkResult(err, "AudioComponentInstanceNew");
     
     // enable recording
 	UInt32 flag = 1;
-    AudioUnitSetProperty(audioUnit,
-                         kAudioOutputUnitProperty_EnableIO,
-                         kAudioUnitScope_Input,
-                         kInputBus,
-                         &flag,
-                         sizeof(flag));
+    err = AudioUnitSetProperty(audioUnit,
+                               kAudioOutputUnitProperty_EnableIO,
+                               kAudioUnitScope_Input,
+                               kInputBus,
+                               &flag,
+                               sizeof(flag));
+    checkResult(err, "AudioUnitSetProperty-EnableIO-Scope_Input");
     
     // set format
 	AudioStreamBasicDescription fmt;
@@ -145,23 +167,25 @@ static OSStatus inputCallback(void *inRefCon,
     fmt.mBytesPerFrame    = kTwoBytesPerSInt16;
 	fmt.mBytesPerPacket   = kTwoBytesPerSInt16;
 	fmt.mBitsPerChannel   = kTwoBytesPerSInt16 * kEightBitsPerByte;
-    AudioUnitSetProperty(audioUnit,
-                         kAudioUnitProperty_StreamFormat,
-                         kAudioUnitScope_Input,
-                         0,
-                         &fmt,
-                         sizeof(fmt));
+    err = AudioUnitSetProperty(audioUnit,
+                               kAudioUnitProperty_StreamFormat,
+                               kAudioUnitScope_Input,
+                               0,
+                               &fmt,
+                               sizeof(fmt));
+    checkResult(err, "AudioUnitSetProperty-StreamFormat-Scope_Input");
     
     // set callback
 	AURenderCallbackStruct cbStruct;
 	cbStruct.inputProc = inputCallback;
 	cbStruct.inputProcRefCon = self;
-	AudioUnitSetProperty(audioUnit,
-                         kAudioOutputUnitProperty_SetInputCallback,
-                         kAudioUnitScope_Global,
-                         kInputBus,
-                         &cbStruct,
-                         sizeof(cbStruct));
+	err = AudioUnitSetProperty(audioUnit,
+                               kAudioOutputUnitProperty_SetInputCallback,
+                               kAudioUnitScope_Global,
+                               kInputBus,
+                               &cbStruct,
+                               sizeof(cbStruct));
+    checkResult(err, "AudioUnitSetProperty-SetInputCallback-Scope_Global");
 }
 
 @end
